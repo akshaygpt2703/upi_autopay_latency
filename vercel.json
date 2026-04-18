@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/bse/:path*",
+            "destination": "https://bsestarmf.in/:path*"
+        }
+    ]
+}
