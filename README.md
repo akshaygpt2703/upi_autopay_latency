@@ -94,10 +94,10 @@ create table upi_test_clients (
 
 -- Seed rows (replace with your own)
 insert into upi_test_clients values
-  ('V01093967F', 'GULNAZ PARVEEN',   'SB', '1652010011112',      '', 'PUNB0165220'),
-  ('V01093970W', 'ANKIT BHARDWAJ',   'SB', '00000038377346788',  '', 'SBIN0017556'),
-  ('V01100802A', 'ASHUTOSH GUPTA',   'SB', '5157019227',         '', 'UTIB0005140'),
-  ('V05144802Z', 'AKSHAY GUPTA',     'SB', '125701505423',       '', 'ICIC0001257');
+  ('V01093967F', 'GULNAZ PARVEEN',   'SB', '1652010011112',      '', 'AC NO'),
+  ('V01093970W', 'ANKIT BHARDWAJ',   'SB', '00000038377346788',  '', 'AC NO'),
+  ('V01100802A', 'ASHUTOSH GUPTA',   'SB', '5157019227',         '', 'AC NO'),
+  ('V05144802Z', 'AKSHAY GUPTA',     'SB', '125701505423',       '', 'AC NO');
 
 -- One row per test run, updated as T1→T2→T3→T4 populate
 create table upi_latency_logs (
