@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from './lib/supabase.js';
+import { op } from './lib/openpanel.js';
 import {
   getBsePassword,
   getBseAccessToken,
@@ -118,7 +119,7 @@ export default function App() {
   }, [t1, t3]);
 
   /* -------------------- T4 polling driver (invoked from handleApproved) -------------------- */
-  async function startMandateStatusPolling({ client, mandateId: mid, logId: lid }) {
+  async function startMandateStatusPolling({ client, mandateId: mid, logId: lid, collectResponseAt }) {
     // Cancel any previous poll loop before starting a new one
     pollCancelRef.current.cancelled = true;
     const cancelRef = { cancelled: false };
@@ -175,6 +176,13 @@ export default function App() {
             setFinalMandateStatus(classification.mandateStatus);
             setFinalRemarks(classification.remarks);
           }
+          const latencyMs = new Date(pollAt) - new Date(collectResponseAt);
+          op.track('latency_measured', {
+            ms: latencyMs,
+            status: classification.status === 'success' ? 'success' : 'failure',
+            mandate_method: 'upi_autopay',
+          });
+
           await supabase
             .from('upi_latency_logs')
             .update({
@@ -206,6 +214,13 @@ export default function App() {
     }
 
     if (!cancelRef.cancelled) {
+      const timeoutMs = Date.now() - new Date(collectResponseAt);
+      op.track('latency_measured', {
+        ms: timeoutMs,
+        status: 'timeout',
+        mandate_method: 'upi_autopay',
+      });
+
       setPollStatus('timeout');
       await supabase
         .from('upi_latency_logs')
@@ -330,7 +345,7 @@ export default function App() {
 
     // Fire the MandateDetails polling only after this click
     if (selectedClient && mandateId) {
-      startMandateStatusPolling({ client: selectedClient, mandateId, logId });
+      startMandateStatusPolling({ client: selectedClient, mandateId, logId, collectResponseAt: t1 });
     }
   }
 
